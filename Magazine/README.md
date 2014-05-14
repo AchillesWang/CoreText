@@ -49,7 +49,6 @@ Introduction
 	CFRelease(frame);
 }
 ```
-
 <p>好吧让我们来讨论这个，使用上面的注释标记来指定每个部分:</p>
 
 1. 在这里，你需要创建一个边界，在区域的路径中您将绘制文本。（就是说我给你指定一个帐号，你必需给指定帐号汇钱）。在Mac和iOS上CoreText支持不同的形状，如矩形和圆。在这个简单的例子中，您将使用整个视图范围为在那里您将通过创建从self.bounds一个CGPath参考绘制矩形。
@@ -62,9 +61,8 @@ Introduction
 
  ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/can_down.png "github") <br/>
  
-<p>嗯！这不是我的**苍老师**？因为像许多低级别的API，CoreText采用了Y坐标系翻转。因为这个使事情变得更糟，内容也呈现向下翻转！(CoreText因为是用了*笛卡尔坐标系*)，请记住，如果你混合UIKit的绘画和CoreText绘画，你可能会得到奇怪的结果让我们来解决的内容方向！修改代码</p>
+<p>嗯！这不是我的`苍老师`？因为像许多低级别的API，CoreText采用了Y坐标系翻转。因为这个使事情变得更糟，内容也呈现向下翻转！(CoreText因为是用了`笛卡尔坐标系`)，请记住，如果你混合UIKit的绘画和CoreText绘画，你可能会得到奇怪的结果让我们来解决的内容方向！修改代码</p>
 ```Obj-C
-CGContextS
 -(void)drawRect:(CGRect)rect{
 	// Drawing code
 	CGContextRef ref = UIGraphicsGetCurrentContext();
@@ -91,24 +89,27 @@ CGContextS
 ```
 
 <p>这是非常简单的代码，刚刚翻转的内容通过应用转换到视图的上下文。每一次绘制文本的时候只需要复制/粘贴它（就是把这一行代码在绘制文本前，从copy过去就行了）。
-再次运行一下，看苍老师是不是又回来了。</p>
+再次运行一下，看`苍老师`是不是又回来了。</p>
  ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/can_up.png "github")
  
 The Core Text Object Model(Core Text对象模型)
 ----------------------------------- 
-如果你是一个有点困惑CTFramesetter和CTFrame 没关系。在这里，我会做一个简短解释CoreText是如何呈现的文字内容。
+</p>如果你是一个有点困惑CTFramesetter和CTFrame 没关系。在这里，我会做一个简短解释CoreText是如何呈现的文字内容。
 下面看起来像是CoreText对象模型：
  
 您可以用NSAttributedString创建一个CTFramesetterRef，同时CTTypesetter的实例将自动为您创建，管理您的字体类。接下来您使用CTFramesetter创建一个或多个frame您在其中会呈现文本。
 当你创建一个frame您要它文字将其矩形的范围内呈现，然后CoreText自动为文本的每一行文字，创建一个CTLine和（注意）一个CTRun(每个文本块具有相同的格式) 
+
 例子，核心文本将创建一个CTRun如果你有几个单词在一排红色，接着又CTRun以下纯文本，接着又CTRun加粗句子。再等等，非常重要的 - 你没有创建CTRun实例，CoreText创建它根据你提供的NSAttributedString中的属性
-每个CTRun的对象可以采取不同的属性，所以你必须很好地控制字距、连字，宽度，高度等。
+每个CTRun的对象可以采取不同的属性，所以你必须很好地控制字距、连字，宽度，高度等。</p>
+
 Onto the Magazine App!（杂志应用程序）
 -----------------------------------
 要创建这个杂志的应用程序, 我们需要标记一些文本具有不同的属性的能力。我们可以做到这一点通过直接使用在NSAttributedString中的方法如setAttributes:range，但是在实践中这是笨拙的处理方式（除非你喜欢刻意写一吨的代码！）
 所以为了让事情更简单与合作，我们将创建一个简单的文本标记解析器，这将使我们能够使用简单的标签来在杂志内容设置格式。
-转到File\New\New File，选择iOS\Cocoa Touch\Objective-C class，然后单击下一步。输入NSObject为父类，单击下一步，命名新类MarkupParser，然后单击保存。
-MarkupParser.h
+选择*File*>*New*>*New File*，选择*iOS*>Cocoa Touch*>*Objective-C class*，然后单击下一步。输入NSObject为父类，单击下一步，命名新类MarkupParser，然后单击保存。
+```Obj-C
+//MarkupParser.h
 #import <Foundation/Foundation.h>
 #import <CoreText/CoreText.h>
 
@@ -122,8 +123,9 @@ MarkupParser.h
 
 -(NSAttributedString*)attrStringFromMark:(NSString*)html;
 @end
-
-MarkupParser.m
+```
+```Obj-C
+//MarkupParser.m
 #import "JYMarkParser.h"
 
 @implementation JYMarkParser
@@ -153,6 +155,7 @@ MarkupParser.m
     self.images = nil;
 }
 @end
+```
 
 正如你看到你开始解析器代码很简单 - 它只是包含属性来保存字体，文本颜色，笔画宽度和笔画颜色。稍后我们将添加里面的文字图像，所以你需要，你要保持在文字图像列表的数组。
 编写解析器通常是很艰苦的工作，所以我要告诉你如何建立一个非常非常简单的使用正则表达式。本教程的解析器将非常简单，只支持打开标签 - 即标记将设置标记后的文本的样式，样式将应用到一个新的标签被发现。该文本标记看起来像这样：
