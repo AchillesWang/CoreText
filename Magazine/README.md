@@ -89,8 +89,9 @@ CGContextS
 }
 ```
 
-这是非常简单的代码，刚刚翻转的内容通过应用转换到视图的上下文。每一次绘制文本的时候只需要复制/粘贴它（就是把这一行代码在绘制文本前，从copy过去就行了）。
-再次运行一下，看苍老师是不是又回来了。
+<p>这是非常简单的代码，刚刚翻转的内容通过应用转换到视图的上下文。每一次绘制文本的时候只需要复制/粘贴它（就是把这一行代码在绘制文本前，从copy过去就行了）。
+再次运行一下，看苍老师是不是又回来了。</p>
+ ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/can_up.png "github")
  
 The Core Text Object Model(Core Text对象模型)
 如果你是一个有点困惑CTFramesetter和CTFrame 没关系。在这里，我会做一个简短解释CoreText是如何呈现的文字内容。
