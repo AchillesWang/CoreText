@@ -162,16 +162,18 @@ Onto the Magazine App!（杂志应用程序）
 并产生这样的输出：
 
 对于本教程的目的，这样的标记将是相当足够了。为您的项目可以进一步开发它，如果你想更牛B的功能的话。
-Let’s go
-在attrStringFromMarkup：方法中添加以下内容：
-NSMutableAttributedString* aString = [[NSMutableAttributedString alloc] initWithString:@""];//1
-    NSError* error = nil;
-    //(.*?).通配符 *？匹配上一个元素零次或多次，但次数尽可能少。
-    //^匹配必须从字符串或一行的开头开始。
-    //<>的位置
-NSRegularExpression* regex = [[NSRegularExpression alloc]initWithPattern:@"(.*?)(<[^>]+>|\\Z)"
-options:NSRegularExpressionCaseInsensitive|NSRegularExpressionDotMatchesLineSeparators
-                                            error:&error]; //2
+Let’s go在```attrStringFromMark：```方法中添加以下内容：
+```Obj-C
+-(NSAttributedString*)attrStringFromMark:(NSString*)markup
+{
+    	NSMutableAttributedString* aString = [[NSMutableAttributedString alloc] initWithString:@""];//1
+    	NSError* error = nil;
+    	//(.*?).通配符 *？匹配上一个元素零次或多次，但次数尽可能少。
+    	//^匹配必须从字符串或一行的开头开始。
+	 //<>的位置
+	NSRegularExpression* regex = [[NSRegularExpression alloc]initWithPattern:@"(.*?)(<[^>]+>|\\Z)"
+				options:NSRegularExpressionCaseInsensitive|NSRegularExpressionDotMatchesLineSeparators
+                                            			           error:&error]; //2
     
     NSArray* chunks = [regex matchesInString:mark options:0 range:NSMakeRange(0, mark.length)];
     if (error) {
@@ -179,13 +181,15 @@ options:NSRegularExpressionCaseInsensitive|NSRegularExpressionDotMatchesLineSepa
         //返回原来的字符串
         return [[NSAttributedString alloc] initWithString:mark];
     }
-有两个章节，这里包括：
-1.	首先，初始化一个空的NSMutableAttributedString
-2.	接下来，你需要创建一个正则表达式来匹配文本和标签快。这个正则表达式将匹配基本文本字符串和下列标记，正则表达式“选找匹配的字符串，直到你遇到’<’然后匹配任何数量的字符，直到你遇到”>”或者”\n””
+}
+```
+有两个章节，这里包括：</br>
+1. 首先，初始化一个空的NSMutableAttributedString
+2. 接下来，你需要创建一个正则表达式来匹配文本和标签快。这个正则表达式将匹配基本文本字符串和下列标记，正则表达式“选找匹配的字符串，直到你遇到’<’然后匹配任何数量的字符，直到你遇到”>”或者”\n””
 
-为什么要创建这个正则表达式？我们将用它来搜索字符串的每个匹配的地方，然后1）找到要修改样式的字符串，然后2）	根据解析出来的样式，改变字符串的颜色，字体等。重复1、2的步骤改变每一处样式。
-很简单的解析器，不是吗？
+为什么要创建这个正则表达式？我们将用它来搜索字符串的每个匹配的地方，然后1）找到要修改样式的字符串，然后2)根据解析出来的样式，改变字符串的颜色，字体等。重复1、2的步骤改变每一处样式。很简单的解析器，不是吗？
 现在数组chunks中你拥有了所有的标记和需要修改的文本，你需要循chunks从其中取得要字符串和样式
+```Obj-C
 -(NSAttributedString*)attrStringFromMark:(NSString*)mark
 {
     NSMutableAttributedString* aString = [[NSMutableAttributedString alloc] initWithString:@""];
@@ -259,11 +263,11 @@ options:NSRegularExpressionCaseInsensitive|NSRegularExpressionDotMatchesLineSepa
     }
     return aString;
 }
-
+```
 尼玛，这是一个很大的代码！但不用担心，我们在这里逐节介绍：
-1.	快速枚举“chunks”数组中我们用正则找到的NSTextCheckingResult对象，对“chunks”数组中的元素用“<”字符分割（“<”是标签的起始）。其结果，在parts [0]中的内容添加到aString中(aString是一个NSAttributedString)，接下来在parts[1]中你有标记的内容为后面的文本改变格式。
-2.	其次,你创建一个字典保持一系列的格式化选项- 这是你可以通过格式属性的NSAttributedString的方式。看看这些Key的名称- 他们是苹果定义的常量(详情请围观参考)。通过调用appendAttributedString: 新的文本块与应用格式被添加到结果字符串。
-3.	最后，你检查如果有文字后发现了一个标记；如果以“font”开头的正则表达式每一种可能的标记属性。对于“face”属性的字体的名称保存在self.font，为“color”我和你做了一点改变：对<font color="red">文本值“red”采取的是colorRegex，然后选择器“redColor”被创建和执行在UIColor。
+1.快速枚举```Obj-C chunks```数组中我们用正则找到的```Obj-C NSTextCheckingResult```对象，对“chunks”数组中的元素用“<”字符分割（“<”是标签的起始）。其结果，在parts [0]中的内容添加到aString中(aString是一个NSAttributedString)，接下来在parts[1]中你有标记的内容为后面的文本改变格式。
+2.其次,你创建一个字典保持一系列的格式化选项- 这是你可以通过格式属性的NSAttributedString的方式。看看这些Key的名称- 他们是苹果定义的常量(详情请围观参考)。通过调用appendAttributedString: 新的文本块与应用格式被添加到结果字符串。
+3.最后，你检查如果有文字后发现了一个标记；如果以“font”开头的正则表达式每一种可能的标记属性。对于“face”属性的字体的名称保存在self.font，为“color”我和你做了一点改变：对<font color="red">文本值“red”采取的是colorRegex，然后选择器“redColor”被创建和执行在UIColor。
 类 - 这（嘿嘿）返回一个红色的的UIColor实例（在实际中可以使用#FFFFFFFF这种方式装换成颜色，网上有自己找找），请注意这个技巧只适用于的UIColor的预定义的颜色（如果你调用了一个UIColor中不存在的方法，你的代码会奔溃！）但是这足以满足本教程。stroke color属性的工作原理很像颜色属性，但如果则strokeColor的值为“none”刚刚设置笔触widht到0.0，所以stroke没有将被应用到的文本。
 Note:如果你好奇在本节中正则表达式是如何工作，请阅读NSRegularExpression class reference
 没错！绘制格式化文本的一半工作完成- 现在用attrStringFromMark：可以得到一个有标记的NSAttributedString输出到CoreText。
@@ -280,6 +284,8 @@ A Basic Magazine Layout（一个基础的杂志布局）
 到目前为止，我们的文字显示出来，它是一个很好的第一步。但对于一本杂志，我们希望有列 - 而这正是CoreText变得特别方便。
 在继续进行布局代码，让我们先加载一个更长的字符串到应用程序，所以我们有一些足够长的多行换行。把这个test.txt拷贝到项目中。
 然后在Controller中添加一下代码
+
+```Obj-C 
 #import "JYViewController.h"
 #import "JY_CTView.h"
 #import "JYMarkParser.h"
@@ -298,6 +304,7 @@ A Basic Magazine Layout（一个基础的杂志布局）
 }
 
 @end
+```
 当应用程序的视图被加载，应用程序从test.txt的读取文本，将其转换为一个属性字符串，然后设置在窗口的视图attString属性。我们还没有添加该属性到CTView，所以让我们添加了下！
 在CTView.h定义这3个实例变量：
 float frameXOffset; 
@@ -316,11 +323,13 @@ OK！我们已经得到了自由滚动和翻页现已推出。我们要启用分
 这个类确实差不多就是这样- 它只是呈现CTFrame。我们将在该杂志的每个文本列上创建它的一个实例。
 让我们首先添加一个属性来保存我们的CTView的frames并声明buildFrames方法，它会做的列设置：
 
+```Obj-C 
 @property(nonatomic,strong) NSMutableArray* frames;
 -(void)buildFrames;
-
+```
 现在buildFrames可以一次创建文本框，并将其存储在“frames”数组。让我们添加这样做的代码。
 
+```Obj-C 
 -(void)buildFrames{
     _frameXOffset = 20; //1
     _frameYOffset = 20;
@@ -372,18 +381,21 @@ OK！我们已经得到了自由滚动和翻页现已推出。我们要启用分
     self.contentSize = CGSizeMake(totalPages*self.bounds.size.width, textFrame.size.height);
     
 }
+```
+<p>让我们来看看代码。</p>
 
-让我们来看看代码。
-1.	这里我们做一些设置 - 定义X和Y偏移，启用分页并创建一个空的frames数组
-2.	buildFrames继续通过创建一个路径和视图的边界frame（稍有偏差，所以我们有边距）
-3.	该段说明textPos，这将保持当前位置的文本。这也声明columnIndex，这将计算已经创建多少列。
-4.	这里的while循环运行，直到我们到达了文本的末尾。在循环中，我们创建一个列范围：colRect是的CGRect，要看columnIndex保持当前列的原点和大小。请注意，我们正在不断建立列在右边（不能跨，然后向下）。
-5.	这使得利用CTFrameGetVisibleStringRange功能要弄清楚什么部分的字符串可以容纳在框架（在这种情况下，文本列）。 textPos是这个范围的长度增加，所以下一列的建设可以在下一循环开始（如果有多个文本剩余）。
-6.	而不是像绘画前frame在这里，我们把它传递给新创建的CTColumnView，我们将其存储在self.frames数组为以后的使用，我们把它作为子视图(ScrollView中)。
-7.	最后，totalPages持有所产生的总页数，以及CTView的contentSize属性设置，所以当有内容多于一页，我们得到滚动是自由的。
+1. 这里我们做一些设置 - 定义X和Y偏移，启用分页并创建一个空的frames数组
+2. buildFrames继续通过创建一个路径和视图的边界frame（稍有偏差，所以我们有边距）
+3. 该段说明textPos，这将保持当前位置的文本。这也声明columnIndex，这将计算已经创建多少列。
+4. 这里的while循环运行，直到我们到达了文本的末尾。在循环中，我们创建一个列范围：colRect是的CGRect，要看columnIndex保持当前列的原点和大小。请注意，我们正在不断建立列在右边（不能跨，然后向下）。
+5. 这使得利用CTFrameGetVisibleStringRange功能要弄清楚什么部分的字符串可以容纳在框架（在这种情况下，文本列）。 textPos是这个范围的长度增加，所以下一列的建设可以在下一循环开始（如果有多个文本剩余）。
+6. 而不是像绘画前frame在这里，我们把它传递给新创建的CTColumnView，我们将其存储在self.frames数组为以后的使用，我们把它作为子视图(ScrollView中)。
+7. 最后，totalPages持有所产生的总页数，以及CTView的contentSize属性设置，所以当有内容多于一页，我们得到滚动是自由的。
 
 现在，让我们也调用buildFrames当所有的CT设置完成了。里面JYViewController.m添加在viewDidLoad中的结尾：
+```Obj-C 
 [(JY_CTView *)[self view] buildFrames]
+```
 
 还有一件事让新代码尝试前做，在文件CTView.m找到方法的drawRect：将其删除。我们现在做的所有绘制在CTColumnView类中，所以我们不需要drawRect：方法，专注实现ScrollView的功能。
 好吧……点击运行，你会看到成列的文本，还可以进行拖动。
@@ -396,6 +408,7 @@ Drawing Images in Core Text（CoreText中绘制图像）
  
 当CoreText“到达”一CTRun其中有一个CTRunDelegate它会询问委托- 多么宽，我应该留给这个块的数据，有多高，应该是什么？这样，你建立在文本中孔 - 然后你画你的图片在那个非常的地方。
 让我们先添加一个“IMG”标签支持在我们的小标记解析器！打开MarkupParser并且找到"} //end of font parsing";在这一行后面，立即添加下面的代码添加为“IMG”标签的支持：
+```Obj-C 
 if ([tag hasPrefix:@"img"]) {
     
     __block NSNumber* width = [NSNumber numberWithInt:0];
@@ -458,13 +471,14 @@ if ([tag hasPrefix:@"img"]) {
     //add a space to the text so that it can call the delegate
     [aString appendAttributedString:[[NSAttributedString alloc] initWithString:@" " attributes:attrDictionaryDelegate]];
 }
+```
 让我们来看看所有的新代码 - 实际上解析“IMG”标签和解析字体标签确实几乎是一样的，通过使用3个正则表达式你有效地检索img标签的宽度，高度和src属性。当完成 - 你添加一个新的NSDictionary持有你刚刚解析出来的信息，再加上图像在文本的位置，最后添加到self.images中。
 现在看第1 部分- CTRunDelegateCallbacks是一个C结构体，持有引用功能。这个结构体提供了你想传递给CTRunDelegate的信息。正如你已经可以猜到的getWidth被调用来提供对CTRun的宽度，getAscent提供CTRun的高度。在你上面的代码提供该些处理程序的函数名; 稍后我们要添加的函数主体。
 第2节是非常重要的 – imgAtt字典持有的图像的尺寸; 这个对象将被retain一下在非ARC，因为它将要传递给函数处理-所以，当getAscent处理函数触发时它会得到参数imgAttr字典，然后读取图片的高度，并且提供值给CoreText。（就是这个feel倍爽）！
 CTRunDelegateCreate在第3节创建一个委托实例和绑定的回调与数据参数。
 在接下来的步骤中，您需要创建的属性字典（以同样的方式作为上述字体的格式），不能直接使用CTRunDelegateRef。到最后你加一个空格去触发delagate图像将被渲染。
 下一步，你已经预料，是提供的回调函数给委托：
-
+```C
 /* Callbacks */
 static void deallocCallback( void* ref ){
     ref =nil;
@@ -478,7 +492,7 @@ static CGFloat descentCallback( void *ref ){
 static CGFloat widthCallback( void* ref ){
     return [(NSString*)[(__bridge NSDictionary*)ref objectForKey:@"width"] floatValue];
 }
-
+```
 ascentCallback，descentCallback和widthCallback读各属性从字典中并且提供给CoreText，。deallocCallback做的是什么，它释放的字典保存的图像信息- 这就是所谓的当CTRunDelegate得到释放，让你有机会做你的内存管理。
 现在，您的解析器处理“IMG”标签，让我们也调整CTView来呈现它们。我们需要一种方法来将图像数组发送到视图，让我们结合设置属性字符串和图像转声明一个新方法。添加的代码：
 JY_CTView.h
@@ -500,15 +514,20 @@ JY_CTView.m
 如果您查找attrStringFromMark：在JYMarkupParser类，你会看到它保存所有的图像标记数据到self.images。这是现在您所传递什么直接向CTView。
 
 渲染图像，我们就必须知道图像应该出现在什么地方。要找到那个地方我们需要知道若干个值的由来：
-	contentOffset当内容被滚动
-	CTView的frame偏移（frameXOffset，frameYOffset）
-	CTLine原点坐标（CTLine可能在例如段落的开头已偏移）
-	CTRun的原点和CTLine的原点之间的距离
+
+* contentOffset当内容被滚动
+* CTView的frame偏移（frameXOffset，frameYOffset）
+* CTLine原点坐标（CTLine可能在例如段落的开头已偏移）
+* CTRun的原点和CTLine的原点之间的距离
  
 让我们来渲染这些图片！首先，我们需要更新JY_CTColumnView类：
-JY_CTColumnView.h
+```Obj-C 
+//JY_CTColumnView.h
 @property(nonatomic,strong) NSMutableArray *images;
-JY_CTColumnView.m
+
+```
+```Obj-C 
+//JY_CTColumnView.m
 - (void)drawRect:(CGRect)rect
 {
     // Drawing code
@@ -527,11 +546,14 @@ JY_CTColumnView.m
         CGContextDrawImage(conRef, imgBounds, img.CGImage);
     }
 }
+```
 所以用这个代码更新我们添加代码和一个名为Images属性，我们将不断出现在每个文本列中的图像列表。为了避免声明的又一新的类来保存保存图像内的图像数据，我们存储图像内的图像数据用NSArray：
-1.	一个UIImage实例
-2.	图像边界-图像在文字中的原点和大小
+
+1. 一个UIImage实例
+2. 图像边界-图像在文字中的原点和大小
 
 而现在，计算图像“的位置，并将它们附加到相应的文本列的代码：
+```Obj-C 
 -(void)attachImagesWithFrame:(CTFrameRef)f inColumnView:(JY_CTColumnView*)col
 {
     //drawing images
@@ -593,10 +615,10 @@ JY_CTColumnView.m
         lineIndex++;
     }
 }
-
+```
 
 我知道这一段代码非常的不好看，忍受一下教程一会就结束了。这是最后的冲刺阶段。
-我们一部分一部分的看：
+我们一部分一部分的看：</br>
 1.	CTFrameGetLines给你返回CTLine对象的数组。
 2.	得到CTFrameRef中所有CTLineRef的原点(Origin) - 简而言之：你得到所有的文本行的左上角坐标列表。
 3.	你的第一个图像的属性数据载入nextImage，imgLoaction是图片在文本中的位置。
@@ -609,12 +631,15 @@ JY_CTColumnView.m
 10.	加载图片使用给定的文件名，并得到当前列的矩形，并最终在图片所需要的矩形来显示。
 11.	您创建一个NSArray使用UIImage和计算出来的frame，你将它添加到CTColumnView的图像列表
 12.	读取下一张图片
-OK,最后一个小步骤：找到JY_CTView中找到“[content setCTFrame:(id)frame]”并且在这一行下面添加如下：
+OK,最后一个小步骤：找到JY_CTView中找到```[content setCTFrame:(id)frame]```并且在这一行下面添加如下：
+```Obj-C 
 [self attachImagesWithFrame:frame inColumnView:content];
+```
 
 现在你有了代码，唯独没有丰富的内容，不用担心我给你准备了一些内容，如下：
 1.	下载、解压并且把它导入到你的工程中URL:xiaoxiao。
 2.	更改代码如下
+```Obj-C 
 NSString* string = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"zombies" ofType:@"txt"]
                                                  encoding:NSUTF8StringEncoding
                                                     error:nil];
@@ -622,9 +647,11 @@ JYMarkParser* mp = [[JYMarkParser alloc]init];
 NSAttributedString* attString =[mp attrStringFromMark:string];
 [_contentView setAttString:attString withImages:mp.images];
 [_contentView buildFrames];
+```
 点击运行
  
 只是一个最后一步。说我们要在合理的列中的文本，使其充满整个列的整个宽度。添加下面的代码来实现这一目标：
+```Obj-C 
 -(void)setAttString:(NSAttributedString *)attString withImages:(NSArray *)imgs
 {
     self.images = imgs;
@@ -642,6 +669,7 @@ NSAttributedString* attString =[mp attrStringFromMark:string];
     [stringCopy addAttributes:attrDictionary range:NSMakeRange(0, [attString length])];
     self.attString = (NSAttributedString*)stringCopy;
 }
+```
 想要更多的段落样式，请查阅文档。从而获取更多的段落样式。
 When to use Core Text and why?
 现在，你的杂志APP和CoreText已经完成，也许你会问：“为什么我们使用CoreText而不使用UIWebView”。
@@ -649,7 +677,8 @@ When to use Core Text and why?
 想象一下，你有你的10多个标签的UI，这意味着你要消耗10个Safaris的内存（好吧，差不多，但你明白了吧）。
 所以，请记住：UIWebView的是一个很好的网页浏览器，当你需要的是一种高效的文本渲染引擎请使用CoreText。
 Where To Go From Here?
-以下是我们在开发的上述CoreText教程完整的CoreText示例项目。如果你想要更多支持，可以去了解CoreText。看看应用程序是否可以添加以下一功能：
+以下是我们在开发的上述CoreText教程完整的CoreText示例项目。如果你想要更多支持，可以去了解CoreText。看看应用程序是否可以添加以下一功能：<br>
+
 1.	添加更多的标签
 2.	CTRun支持更多的样式
 3.	添加更多的段落样式
@@ -658,4 +687,5 @@ Where To Go From Here?
 因为我知道你已经在思考如何扩大解析器引擎超出了我,包括在这个简短的教程我对你两条建议：
 1.	学习HTML解析,参考：HMTL-Parser
 2.	或者创建你自己的语法解析器，做任何想知道你想出使用的OBJ - C ParseKit
+
 如果您有任何疑问，请百度
