@@ -17,16 +17,17 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
 * 最后吃掉你的脑子
 
 ### 建立一个核心文本项目
-为了充分利用这个CoreText教程，您首先要知道iOS开发的基础知识。如果你是iOS开发新手，首先你应该看看的一些基础教程。事不宜迟，让我们通过自己开发一个简单的《杂志》应用程序:
+为了充分利用这个CoreText教程，您首先要知道iOS开发的基础知识。如果你是iOS开发新手，首先你应该看看的一些基础教程.事不宜迟，让我们通过自己开发一个简单的《杂志》应用程序:
 * 创建应用的时候选Single View Application
 * 添加CoreText.framework
-* 创建一个JY_CTView继承自UIView
 
 ### 添加一个CoreText View
 在UIView的drawRect:方法中使用CoreText。
-* 首先，你要创建一个自定义的UIView，就给他命名为CTView吧。
-* 其次，在XIB中添加一个UIView，就像这样：
-* 最后在 drawRect函数中绘制文本（苍老师！）
+* 首先，创建一个JY_CTView继承自UIView。
+* 其次，在Storyboard中添加一个UIView，就像这样:<br/>
+![github](http://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/JY_CTView01.png "github")  
+* 最后在 drawRect函数中绘制文本\"苍老师！\"<br/>
+![github](http://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/can_down_.png "github") 
 
 好吧让我们来讨论这个，使用上面的注释标记来指定每个部分：
 1.	在这里，你需要创建一个边界，在区域的路径中您将绘制文本。（就是说我给你指定一个帐号，你必需给指定帐号汇钱）。在Mac和iOS上CoreText支持不同的形状，如矩形和圆。在这个简单的例子中，您将使用整个视图范围为在那里您将通过创建从self.bounds一个CGPath参考绘制矩形。
