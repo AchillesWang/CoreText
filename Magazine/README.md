@@ -1,5 +1,5 @@
 CoreText
-=================================== 
+============================ 
 [点击此处-显示原文](http://www.raywenderlich.com/4147/core-text-tutorial-for-ios-making-a-magazine-app)
 
 Introduction
@@ -28,27 +28,28 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
 ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/JY_CTView01.png "github")  
 * 最后在 drawRect函数中绘制文本"苍老师！"
 
-		-(void)drawRect:(CGRect)rect
-		{
-		    // Drawing code
-		    CGContextRef ref = UIGraphicsGetCurrentContext();
+```Obj-C
+-(void)drawRect:(CGRect)rect{
+	// Drawing code
+	CGContextRef ref = UIGraphicsGetCurrentContext();
 		    
-		    CGMutablePathRef path = CGPathCreateMutable();//1
-		    CGPathAddRect(path, NULL, self.bounds);
-		    NSAttributedString* attString = [[NSAttributedString alloc] initWithString:@"苍老师！"];//2
+	CGMutablePathRef path = CGPathCreateMutable();//1
+	CGPathAddRect(path, NULL, self.bounds);
+	NSAttributedString* attString = [[NSAttributedString alloc] initWithString:@"苍老师！"];//2	
+	
+	CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attString);//3
+	CTFrameRef frame = CTFramesetterCreateFrame(framesetter,
+						    CFRangeMake(0, attString.length),
+		                                    path,
+		                                    NULL);
+	CTFrameDraw(frame, ref); //4
 		    
-		    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attString);//3
-		    CTFrameRef frame = CTFramesetterCreateFrame(framesetter,
-		                                                CFRangeMake(0, attString.length),
-		                                                path,
-		                                                NULL);
-		    CTFrameDraw(frame, ref); //4
-		    
-		    CFRelease(framesetter); //5
-		    CFRelease(path);
-		    CFRelease(frame);
-		}
-		
+	CFRelease(framesetter); //5
+	CFRelease(path);
+	CFRelease(frame);
+}
+```
+
 好吧让我们来讨论这个，使用上面的注释标记来指定每个部分：
 
 1. 在这里，你需要创建一个边界，在区域的路径中您将绘制文本。（就是说我给你指定一个帐号，你必需给指定帐号汇钱）。在Mac和iOS上CoreText支持不同的形状，如矩形和圆。在这个简单的例子中，您将使用整个视图范围为在那里您将通过创建从self.bounds一个CGPath参考绘制矩形。
@@ -61,39 +62,34 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
 不管你信不信，这就是你使用CoreText绘制一些简单的文本,点击运行:<br/>
  ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/can_down.png "github") <br/>
 嗯！这不是我的**苍老师**？因为像许多低级别的API，CoreText采用了Y坐标系翻转。因为这个使事情变得更糟，内容也呈现向下翻转！(CoreText因为是用了*笛卡尔坐标系*)，请记住，如果你混合UIKit的绘画和CoreText绘画，你可能会得到奇怪的结果让我们来解决的内容方向！修改代码
-
-		-(void)drawRect:(CGRect)rect
-		{
-		    // Drawing code
-		    CGContextRef ref = UIGraphicsGetCurrentContext();
-		    \<font size="3" color="red"\>This is some text!\</font\>
-		    //flip the coordinate system
-		    CGContextSetTextMatrix(conRef, CGAffineTransformIdentity);
-		    CGContextTranslateCTM(conRef, 0, self.bounds.size.height);
-		    CGContextScaleCTM(conRef, 1.0, -1.0);
-		    
-		    CGMutablePathRef path = CGPathCreateMutable();//1
-		    CGPathAddRect(path, NULL, self.bounds);
-		    NSAttributedString* attString = [[NSAttributedString alloc] initWithString:@"苍老师！"];//2
-		    
-		    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attString);//3
-		    CTFrameRef frame = CTFramesetterCreateFrame(framesetter,
-		                                                CFRangeMake(0, attString.length),
-		                                                path,
-		                                                NULL);
-		    CTFrameDraw(frame, ref); //4
-		    
-		    CFRelease(framesetter); //5
-		    CFRelease(path);
-		    CFRelease(frame);
-		}
-
-
 ```Obj-C
-CGContextSetTextMatrix(conRef, CGAffineTransformIdentity);
-CGContextTranslateCTM(conRef, 0, self.bounds.size.height);
-CGContextScaleCTM(conRef, 1.0, -1.0);
+CGContextS
+-(void)drawRect:(CGRect)rect{
+	// Drawing code
+	CGContextRef ref = UIGraphicsGetCurrentContext();
+	//flip the coordinate system
+	CGContextSetTextMatrix(conRef, CGAffineTransformIdentity);
+	CGContextTranslateCTM(conRef, 0, self.bounds.size.height);
+	CGContextScaleCTM(conRef, 1.0, -1.0);
+		    
+	CGMutablePathRef path = CGPathCreateMutable();//1
+	CGPathAddRect(path, NULL, self.bounds);
+	NSAttributedString* attString = [[NSAttributedString alloc] initWithString:@"苍老师！"];//2
+		    
+	CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attString);//3
+	CTFrameRef frame = CTFramesetterCreateFrame(framesetter,
+		                                    CFRangeMake(0, attString.length),
+		                                    path,
+		                                    NULL);
+	CTFrameDraw(frame, ref); //4
+		    
+	CFRelease(framesetter); //5
+	CFRelease(path);
+	CFRelease(frame);
+}
 ```
+
+
 
 这是非常简单的代码，刚刚翻转的内容通过应用转换到视图的上下文。每一次绘制文本的时候只需要复制/粘贴它（就是把这一行代码在绘制文本前，从copy过去就行了）。
 再次运行一下，看苍老师是不是又回来了。
