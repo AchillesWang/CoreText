@@ -49,7 +49,8 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
 		    CFRelease(frame);
 		}
 		
-好吧让我们来讨论这个，使用上面的注释标记来指定每个部分：</br>
+好吧让我们来讨论这个，使用上面的注释标记来指定每个部分：
+
 1. 在这里，你需要创建一个边界，在区域的路径中您将绘制文本。（就是说我给你指定一个帐号，你必需给指定帐号汇钱）。在Mac和iOS上CoreText支持不同的形状，如矩形和圆。在这个简单的例子中，您将使用整个视图范围为在那里您将通过创建从self.bounds一个CGPath参考绘制矩形。
 2. 在核心文字你不使用的NSString，而是NSAttributedString，如下图所示。 NSAttributedString是一个非常强大的NSString衍生类，它允许你申请的格式属性的文本。就目前而言，我们不会使用格式 - 这里只是创建了一个纯文本字符串。
 3. CTFramesetter当采用CoreText绘制文本最重要的一个类，它管理你的字体引用和你的文本绘制框架。就目前而言，你需要知道的是，CTFramesetterCreateWithAttributedString为您创建一个CTFramesetter，保留它，并用附带的属性字符串初始化它。在这部分中，之后使用CTFramesetterCreateFrame 得到frame用framesetter和path，（我们选择整个字符串在这里），并在绘制时，文字会出现在矩形
