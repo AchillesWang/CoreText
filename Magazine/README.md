@@ -49,7 +49,7 @@ Introduction
 	CFRelease(frame);
 }
 ```
-<p>好吧让我们来讨论这个，使用上面的注释标记来指定每个部分:</p>
+<p>好吧让我们来讨论这个，使用上面的注释标记来指定每个部分:</p></br>
 
 1. 在这里，你需要创建一个边界，在区域的路径中您将绘制文本。（就是说我给你指定一个帐号，你必需给指定帐号汇钱）。在Mac和iOS上CoreText支持不同的形状，如矩形和圆。在这个简单的例子中，您将使用整个视图范围为在那里您将通过创建从self.bounds一个CGPath参考绘制矩形。
 2. 在核心文字你不使用的NSString，而是NSAttributedString，如下图所示。 NSAttributedString是一个非常强大的NSString衍生类，它允许你申请的格式属性的文本。就目前而言，我们不会使用格式 - 这里只是创建了一个纯文本字符串。
@@ -264,7 +264,7 @@ options:NSRegularExpressionCaseInsensitive|NSRegularExpressionDotMatchesLineSepa
     return aString;
 }
 ```
-尼玛，这是一个很大的代码！但不用担心，我们在这里逐节介绍：
+尼玛，这是一个很大的代码！但不用担心，我们在这里逐节介绍：</br>
 1.快速枚举```Obj-C chunks```数组中我们用正则找到的```Obj-C NSTextCheckingResult```对象，对“chunks”数组中的元素用“<”字符分割（“<”是标签的起始）。其结果，在parts [0]中的内容添加到aString中(aString是一个NSAttributedString)，接下来在parts[1]中你有标记的内容为后面的文本改变格式。
 2.其次,你创建一个字典保持一系列的格式化选项- 这是你可以通过格式属性的NSAttributedString的方式。看看这些Key的名称- 他们是苹果定义的常量(详情请围观参考)。通过调用appendAttributedString: 新的文本块与应用格式被添加到结果字符串。
 3.最后，你检查如果有文字后发现了一个标记；如果以“font”开头的正则表达式每一种可能的标记属性。对于“face”属性的字体的名称保存在self.font，为“color”我和你做了一点改变：对<font color="red">文本值“red”采取的是colorRegex，然后选择器“redColor”被创建和执行在UIColor。
