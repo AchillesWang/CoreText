@@ -1,14 +1,13 @@
 CoreText
 =================================== 
 [点击此处-显示原文](http://www.raywenderlich.com/4147/core-text-tutorial-for-ios-making-a-magazine-app)
------------------------------------  
 
 Introduction
-CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本布局和格式。
-它位于在UIKit中和CoreGraphics/Quartz之间的最佳点：
-	UIKit中你有的文本空间，你可以通过XIB简单的使用文本控件在屏幕上显示文字，但你不能改变个别字的颜色。
-	CoreGraphics/Quartz你可以做几乎可以胜任所有的工作，但是你需要计算每个字形的在文本中的位置，并绘制在屏幕上。
-	CoreText正好位于两者之间！你可以完全控制位置，布局，属性，如颜色和大小，但CoreText布局需要你自己管理 - 从自动换行到字体渲染等等。
+-----------------------------------  
+CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本布局和格式。它位于在UIKit中和CoreGraphics/Quartz之间的最佳点：<br/>
+\*UIKit中你有的文本空间，你可以通过XIB简单的使用文本控件在屏幕上显示文字，但你不能改变个别字的颜色。
+\*CoreGraphics/Quartz你可以做几乎可以胜任所有的工作，但是你需要计算每个字形的在文本中的位置，并绘制在屏幕上。
+\*CoreText正好位于两者之间！你可以完全控制位置，布局，属性，如颜色和大小，但CoreText布局需要你自己管理 - 从自动换行到字体渲染等等。
 如果你正在创建一个iPad上的杂志或书籍的应用程序，使用CoreText非常方便。
 
 这个CoreText教程将带你如何使用CoreText创建一个杂志应用-for Zombies!
