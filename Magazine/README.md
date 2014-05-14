@@ -27,6 +27,26 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
 * 其次，在Storyboard中添加一个UIView，就像这样:<br/>
 ![github](http://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/JY_CTView01.png "github")  
 * 最后在 drawRect函数中绘制文本\"苍老师！\"<br/>
+		-(void)drawRect:(CGRect)rect
+		{
+		    // Drawing code
+		    CGContextRef ref = UIGraphicsGetCurrentContext();
+		    
+		    CGMutablePathRef path = CGPathCreateMutable();//1
+		    CGPathAddRect(path, NULL, self.bounds);
+		    NSAttributedString* attString = [[NSAttributedString alloc] initWithString:@"苍老师！"];//2
+		    
+		    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attString);//3
+		    CTFrameRef frame = CTFramesetterCreateFrame(framesetter,
+		                                                CFRangeMake(0, attString.length),
+		                                                path,
+		                                                NULL);
+		    CTFrameDraw(frame, ref); //4
+		    
+		    CFRelease(framesetter); //5
+		    CFRelease(path);
+		    CFRelease(frame);
+		}
 ![github](http://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/can_down.png "github") 
 
 好吧让我们来讨论这个，使用上面的注释标记来指定每个部分：
