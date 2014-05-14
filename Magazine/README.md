@@ -57,12 +57,10 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
 4. CTFrameDraw在提供的大小在给定上下文后绘制，苍老师
 5. 最后，所有使用的对象被释放
 
-请注意，您使用一套像CTFramesetterCreateWithAttributedString和CTFramesetterCreateFrame功能，而不是直接使用Objective-C对象CoreText类时。
-你可能会认为自己“为什么我会要再次使用C，我认为我应该用Objective-C去完成？！”
-好了，很多iOS上的底层库中都在使用标准C，因为速度和简单。不过别担心，你会发现CoreText函数很容易。只是一个要记住最重要的一点：不要忘记使用CFRelease释放内存。
-不管你信不信，这就是你使用CoreText绘制一些简单的文本,点击运行:
- ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/can_down.png "github") 
-嗯！这不是我的苍老师？因为像许多低级别的API，CoreText采用了Y坐标系翻转。因为这个使事情变得更糟，内容也呈现向下翻转！(CoreText因为是用了笛卡尔坐标系)，请记住，如果你混合UIKit的绘画和CoreText绘画，你可能会得到奇怪的结果
+请注意，您使用一套像CTFramesetterCreateWithAttributedString和CTFramesetterCreateFrame功能，而不是直接使用Objective-C对象CoreText类时。你可能会认为自己“为什么我会要再次使用C，我认为我应该用Objective-C去完成？”好了，很多iOS上的底层库中都在使用标准C，因为速度和简单。不过别担心，你会发现CoreText函数很容易。只是一个要记住最重要的一点：不要忘记使用CFRelease释放内存。
+不管你信不信，这就是你使用CoreText绘制一些简单的文本,点击运行:<br/>
+ ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/can_down.png "github") <br/>
+嗯！这不是我的**苍老师**？因为像许多低级别的API，CoreText采用了Y坐标系翻转。因为这个使事情变得更糟，内容也呈现向下翻转！(CoreText因为是用了笛卡尔坐标系)，请记住，如果你混合UIKit的绘画和CoreText绘画，你可能会得到奇怪的结果
 让我们来解决的内容方向！添加以下代码紧接着这一行” CGContextRef ref = UIGraphicsGetCurrentContext();
 
 
