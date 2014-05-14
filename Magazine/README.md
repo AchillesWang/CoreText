@@ -4,12 +4,12 @@ CoreText
 
 Introduction
 -----------------------------------  
-CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本布局和格式。它位于在UIKit中和CoreGraphics/Quartz之间的最佳点。
+<p>CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本布局和格式。它位于在UIKit中和CoreGraphics/Quartz之间的最佳点。</p>
 * UIKit中你有的文本空间，你可以通过XIB简单的使用文本控件在屏幕上显示文字，但你不能改变个别字的颜色。
 * CoreGraphics/Quartz你可以做几乎可以胜任所有的工作，但是你需要计算每个字形的在文本中的位置，并绘制在屏幕上。
 * CoreText正好位于两者之间！你可以完全控制位置，布局，属性，如颜色和大小，但CoreText布局需要你自己管理-从自动换行到字体渲染等等。
 
-如果你正在创建一个iPad上的杂志或书籍的应用程序，使用CoreText非常方便。这个CoreText教程将带你如何使用CoreText创建一个杂志应用你将学习如何：
+<p>如果你正在创建一个iPad上的杂志或书籍的应用程序，使用CoreText非常方便。这个CoreText教程将带你如何使用CoreText创建一个杂志应用你将学习如何：</p>
 * 奠定格式化的上下文本在屏幕上
 * 微调文本的外观
 * 向文本内容中添加图片
@@ -17,9 +17,9 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
 * 最后吃掉你的脑子
 
 ### 建立一个核心文本项目
-为了充分利用这个CoreText教程，您首先要知道iOS开发的基础知识。如果你是iOS开发新手，首先你应该看看的一些基础教程.事不宜迟，让我们通过自己开发一个简单的《杂志》应用程序:
-* 创建应用的时候选Single View Application
-* 添加CoreText.framework
+<p>为了充分利用这个CoreText教程，您首先要知道iOS开发的基础知识。如果你是iOS开发新手，首先你应该看看的一些基础教程.事不宜迟，让我们通过自己开发一个简单的《杂志》应用程序:</p>
+* 创建应用的时候选```Obj-C Single View Application```
+* 添加```Obj-C CoreText.framework```
 
 ### 添加一个CoreText View
 在UIView的drawRect:方法中使用CoreText。
