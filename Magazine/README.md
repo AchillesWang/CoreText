@@ -1,6 +1,8 @@
 CoreText
 =================================== 
-原文地址：core-text-tutorial-for-ios-making-a-magazine-app
+[点击此处-显示原文](http://www.raywenderlich.com/4147/core-text-tutorial-for-ios-making-a-magazine-app)
+-----------------------------------  
+
 Introduction
 CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本布局和格式。
 它位于在UIKit中和CoreGraphics/Quartz之间的最佳点：
