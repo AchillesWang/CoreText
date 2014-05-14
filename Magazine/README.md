@@ -92,7 +92,8 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
 ```Obj-C
 CGContextSetTextMatrix(conRef, CGAffineTransformIdentity);
 CGContextTranslateCTM(conRef, 0, self.bounds.size.height);
-CGContextScaleCTM(conRef, 1.0, -1.0);```
+CGContextScaleCTM(conRef, 1.0, -1.0);
+```
 
 这是非常简单的代码，刚刚翻转的内容通过应用转换到视图的上下文。每一次绘制文本的时候只需要复制/粘贴它（就是把这一行代码在绘制文本前，从copy过去就行了）。
 再次运行一下，看苍老师是不是又回来了。
