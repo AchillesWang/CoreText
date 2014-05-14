@@ -66,7 +66,7 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
 		{
 		    // Drawing code
 		    CGContextRef ref = UIGraphicsGetCurrentContext();
-		    
+		    <font size="3" color="red">This is some text!</font>
 		    //flip the coordinate system
 		    CGContextSetTextMatrix(conRef, CGAffineTransformIdentity);
 		    CGContextTranslateCTM(conRef, 0, self.bounds.size.height);
