@@ -63,9 +63,7 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
 5. 最后，所有使用的对象被释放
 
 <p>请注意，您使用一套像CTFramesetterCreateWithAttributedString和CTFramesetterCreateFrame功能，而不是直接使用Objective-C对象CoreText类时。你可能会认为自己“为什么我会要再次使用C，我认为我应该用Objective-C去完成？”好了，很多iOS上的底层库中都在使用标准C，因为速度和简单。不过别担心，你会发现CoreText函数很容易。只是一个要记住最重要的一点：不要忘记使用CFRelease释放内存。不管你信不信，这就是你使用CoreText绘制一些简单的文本,点击运行:</p>
-
- ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/can_down.png "github") <br/>
- 
+ ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/can_down.png "github") 
 <p>嗯！这不是我的`苍老师`？因为像许多低级别的API，CoreText采用了Y坐标系翻转。因为这个使事情变得更糟，内容也呈现向下翻转！(CoreText因为是用了`笛卡尔坐标系`)，请记住，如果你混合UIKit的绘画和CoreText绘画，你可能会得到奇怪的结果让我们来解决的内容方向！修改代码</p>
 ```Obj-C
 -(void)drawRect:(CGRect)rect{
@@ -99,14 +97,17 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
  
 The Core Text Object Model(Core Text对象模型)
 ----------------------------------- 
-</p>如果你是一个有点困惑CTFramesetter和CTFrame 没关系。在这里，我会做一个简短解释CoreText是如何呈现的文字内容。
+如果你是一个有点困惑CTFramesetter和CTFrame 没关系。在这里，我会做一个简短解释CoreText是如何呈现的文字内容。
 下面看起来像是CoreText对象模型：
+
+ ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/img01.png "github")
  
 您可以用NSAttributedString创建一个CTFramesetterRef，同时CTTypesetter的实例将自动为您创建，管理您的字体类。接下来您使用CTFramesetter创建一个或多个frame您在其中会呈现文本。
+
 当你创建一个frame您要它文字将其矩形的范围内呈现，然后CoreText自动为文本的每一行文字，创建一个CTLine和（注意）一个CTRun(每个文本块具有相同的格式) 
 
 例子，核心文本将创建一个CTRun如果你有几个单词在一排红色，接着又CTRun以下纯文本，接着又CTRun加粗句子。再等等，非常重要的 - 你没有创建CTRun实例，CoreText创建它根据你提供的NSAttributedString中的属性
-每个CTRun的对象可以采取不同的属性，所以你必须很好地控制字距、连字，宽度，高度等。</p>
+每个CTRun的对象可以采取不同的属性，所以你必须很好地控制字距、连字，宽度，高度等。
 
 Onto the Magazine App!（杂志应用程序）
 -----------------------------------
@@ -163,22 +164,28 @@ Onto the Magazine App!（杂志应用程序）
 ```
 
 正如你看到你开始解析器代码很简单 - 它只是包含属性来保存字体，文本颜色，笔画宽度和笔画颜色。稍后我们将添加里面的文字图像，所以你需要，你要保持在文字图像列表的数组。
+
 编写解析器通常是很艰苦的工作，所以我要告诉你如何建立一个非常非常简单的使用正则表达式。本教程的解析器将非常简单，只支持打开标签 - 即标记将设置标记后的文本的样式，样式将应用到一个新的标签被发现。该文本标记看起来像这样：
+
+![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/img03.png "github")
+
 并产生这样的输出：
 
-对于本教程的目的，这样的标记将是相当足够了。为您的项目可以进一步开发它，如果你想更牛B的功能的话。
+![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/img02.png "github")
+
+对于本教程的目的，这样的标记将是相当足够了。为你的项目可以进一步开发它，如果你想更牛B的功能的话。
 Let’s go在```attrStringFromMark：```方法中添加以下内容：
 ```Obj-C
 -(NSAttributedString*)attrStringFromMark:(NSString*)markup
 {
-    	NSMutableAttributedString* aString = [[NSMutableAttributedString alloc] initWithString:@""];//1
-    	NSError* error = nil;
-    	//(.*?).通配符 *？匹配上一个元素零次或多次，但次数尽可能少。
-    	//^匹配必须从字符串或一行的开头开始。
-	 //<>的位置
-	NSRegularExpression* regex = [[NSRegularExpression alloc]initWithPattern:@"(.*?)(<[^>]+>|\\Z)"
-				options:NSRegularExpressionCaseInsensitive|NSRegularExpressionDotMatchesLineSeparators
-                                            			           error:&error]; //2
+    NSMutableAttributedString* aString = [[NSMutableAttributedString alloc] initWithString:@""];//1
+    NSError* error = nil;
+    //(.*?).通配符 *？匹配上一个元素零次或多次，但次数尽可能少。
+    //^匹配必须从字符串或一行的开头开始。
+    //<>的位置
+    NSRegularExpression* regex = [[NSRegularExpression alloc]initWithPattern:@"(.*?)(<[^>]+>|\\Z)"
+				     options:NSRegularExpressionCaseInsensitive|NSRegularExpressionDotMatchesLineSeparators
+                                            			       error:&error]; //2
     
     NSArray* chunks = [regex matchesInString:mark options:0 range:NSMakeRange(0, mark.length)];
     if (error) {
@@ -188,12 +195,15 @@ Let’s go在```attrStringFromMark：```方法中添加以下内容：
     }
 }
 ```
-有两个章节，这里包括：</br>
+有两个章节，这里包括：
+
 1. 首先，初始化一个空的NSMutableAttributedString
-2. 接下来，你需要创建一个正则表达式来匹配文本和标签快。这个正则表达式将匹配基本文本字符串和下列标记，正则表达式“选找匹配的字符串，直到你遇到’<’然后匹配任何数量的字符，直到你遇到”>”或者”\n””
+2. 接下来，你需要创建一个正则表达式来匹配文本和标签快。这个正则表达式将匹配基本文本字符串和下列标记，正则表达式选找匹配的字符串，直到你遇到**<**然后匹配任何数量的字符，直到你遇到**>**或者**\n**。
 
 为什么要创建这个正则表达式？我们将用它来搜索字符串的每个匹配的地方，然后1）找到要修改样式的字符串，然后2)根据解析出来的样式，改变字符串的颜色，字体等。重复1、2的步骤改变每一处样式。很简单的解析器，不是吗？
-现在数组chunks中你拥有了所有的标记和需要修改的文本，你需要循chunks从其中取得要字符串和样式
+
+现在数组```chunks```中你拥有了所有的标记和需要修改的文本，你需要循chunks从其中取得要字符串和样式
+
 ```Obj-C
 -(NSAttributedString*)attrStringFromMark:(NSString*)mark
 {
@@ -269,25 +279,61 @@ options:NSRegularExpressionCaseInsensitive|NSRegularExpressionDotMatchesLineSepa
     return aString;
 }
 ```
-尼玛，这是一个很大的代码！但不用担心，我们在这里逐节介绍：</br>
-1.快速枚举```Obj-C chunks```数组中我们用正则找到的```Obj-C NSTextCheckingResult```对象，对“chunks”数组中的元素用“<”字符分割（“<”是标签的起始）。其结果，在parts [0]中的内容添加到aString中(aString是一个NSAttributedString)，接下来在parts[1]中你有标记的内容为后面的文本改变格式。
-2.其次,你创建一个字典保持一系列的格式化选项- 这是你可以通过格式属性的NSAttributedString的方式。看看这些Key的名称- 他们是苹果定义的常量(详情请围观参考)。通过调用appendAttributedString: 新的文本块与应用格式被添加到结果字符串。
-3.最后，你检查如果有文字后发现了一个标记；如果以“font”开头的正则表达式每一种可能的标记属性。对于“face”属性的字体的名称保存在self.font，为“color”我和你做了一点改变：对<font color="red">文本值“red”采取的是colorRegex，然后选择器“redColor”被创建和执行在UIColor。
+
+尼玛，这是一个很大的代码！但不用担心，我们在这里逐节介绍：
+
+1. 快速枚举```Obj-C chunks```数组中我们用正则找到的```Obj-C NSTextCheckingResult```对象，对“chunks”数组中的元素用“<”字符分割（“<”是标签的起始）。其结果，在parts [0]中的内容添加到aString中(aString是一个NSAttributedString)，接下来在parts[1]中你有标记的内容为后面的文本改变格式。
+2. 其次,你创建一个字典保持一系列的格式化选项- 这是你可以通过格式属性的NSAttributedString的方式。看看这些Key的名称- 他们是苹果定义的常量(详情请围观参考)。通过调用appendAttributedString: 新的文本块与应用格式被添加到结果字符串。
+3. 最后，你检查如果有文字后发现了一个标记；如果以“font”开头的正则表达式每一种可能的标记属性。对于“face”属性的字体的名称保存在self.font，为“color”我和你做了一点改变：对<font color="red">文本值“red”采取的是colorRegex，然后选择器“redColor”被创建和执行在UIColor。
+
 类 - 这（嘿嘿）返回一个红色的的UIColor实例（在实际中可以使用#FFFFFFFF这种方式装换成颜色，网上有自己找找），请注意这个技巧只适用于的UIColor的预定义的颜色（如果你调用了一个UIColor中不存在的方法，你的代码会奔溃！）但是这足以满足本教程。stroke color属性的工作原理很像颜色属性，但如果则strokeColor的值为“none”刚刚设置笔触widht到0.0，所以stroke没有将被应用到的文本。
-Note:如果你好奇在本节中正则表达式是如何工作，请阅读NSRegularExpression class reference
+Note:如果你好奇在本节中正则表达式是如何工作，请阅读[NSRegularExpression class reference](https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSRegularExpression_Class/Reference/Reference.html#//apple_ref/doc/uid/TP40009708-CH1-SW48)。
+
 没错！绘制格式化文本的一半工作完成- 现在用attrStringFromMark：可以得到一个有标记的NSAttributedString输出到CoreText。
 因此，让我们传递一个字符串来呈现，并尝试一下！
-打开CTView.m，只是在@implementation前补充一点：
-#import "JYMarkParser.h"
-修改一下attString
-JYMarkParser* p = [[JYMarkParser alloc]init];
-NSAttributedString * attString = [p attrStringFromMark: @"Hello <font color=\"red\">core text <font color=\"blue\">world!"];
-你上面做一个新的解析器，给它一块标记，它给你返回格式化的文本。这就是它 –点击运行和自己试试看！
+
+打开CTView.m,修改```drawRect:```：
+```Obj-C
+-(void)drawRect:(CGRect)rect
+{
+    // Drawing code
+    CGContextRef ref = UIGraphicsGetCurrentContext();
+    
+    //flip the coordinate system
+    CGContextSetTextMatrix(conRef, CGAffineTransformIdentity);
+    CGContextTranslateCTM(conRef, 0, self.bounds.size.height);
+    CGContextScaleCTM(conRef, 1.0, -1.0);
+    
+    CGMutablePathRef path = CGPathCreateMutable();//1
+    CGPathAddRect(path, NULL, self.bounds);
+    //Parser tag
+    JYMarkParser* p = [[JYMarkParser alloc]init];
+    NSAttributedString * attString = [p attrStringFromMark: @"Hello <font color=\"red\">core text <font color=\"blue\">world!"];
+    
+    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attString);//3
+    CTFrameRef frame = CTFramesetterCreateFrame(framesetter,
+                                                CFRangeMake(0, attString.length),
+                                                path,
+                                                NULL);
+    CTFrameDraw(frame, ref); //4
+    
+    CFRelease(framesetter); //5
+    CFRelease(path);
+    CFRelease(frame);
+}
+```
+
+你上面做一个新的解析器，给它一块标记，它给你返回格式化的文本。点击运行和自己试试看！
+
+ ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/img04.png "github")
  
-是不是只是真棒？由于50行的解析，我们不必处理文本范围和代码重文本格式，我们现在可以只使用一个简单的文本在Magazine app中。此外刚刚编写的简单的解析器，可以无限扩展，支持一切你需要在你的应用程序的杂志。
+是不是只是真棒？由于50行的解析，我们不必处理文本范围和代码重文本格式，我们现在可以只使用一个简单的文本在**Magazine app**中。此外刚刚编写的简单的解析器，可以无限扩展，支持一切你需要在你的应用程序的杂志。
+
 A Basic Magazine Layout（一个基础的杂志布局）
+----------------------------------------------
 到目前为止，我们的文字显示出来，它是一个很好的第一步。但对于一本杂志，我们希望有列 - 而这正是CoreText变得特别方便。
-在继续进行布局代码，让我们先加载一个更长的字符串到应用程序，所以我们有一些足够长的多行换行。把这个test.txt拷贝到项目中。
+在继续进行布局代码，让我们先加载一个更长的字符串到应用程序，所以我们有一些足够长的多行换行。把这个[点击下载test.txt](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/test.txt)拷贝到项目中。
+
 然后在Controller中添加一下代码
 
 ```Obj-C 
@@ -295,28 +341,47 @@ A Basic Magazine Layout（一个基础的杂志布局）
 #import "JY_CTView.h"
 #import "JYMarkParser.h"
 
+@interface JYViewController()
+
+@property (weak, nonatomic) IBOutlet JY_CTView *contentView;
+
+@end
+
 @implementation JYViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSString* string = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"tesst" ofType:@"txt"]
+    NSString* string = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"test" ofType:@"txt"]
                                                  encoding:NSUTF8StringEncoding
                                                     error:nil];
     JYMarkParser* mp = [[JYMarkParser alloc]init];
-    [(JY_CTView*)self.view setAttString:[mp attrStringFromMark:string]];
-	// Do any additional setup after loading the view, typically from a nib.
+    [_contentView setAttString:[mp attrStringFromMark:string]];
 }
 
 @end
 ```
+
 当应用程序的视图被加载，应用程序从test.txt的读取文本，将其转换为一个属性字符串，然后设置在窗口的视图attString属性。我们还没有添加该属性到CTView，所以让我们添加了下！
-在CTView.h定义这3个实例变量：
-float frameXOffset; 
-float frameYOffset; 
-NSAttributedString* attString;
-然后加入相应的代码CTView.h来定义attString一个属性：
-@property(nonatomic,copy) NSAttributedString * attString;
+
+在JY_CTView.h定义这3个实例变量：```float frameXOffset```、```float frameYOffset; ```、```NSAttributedString* attString;```然后加入相应的代码JY_CTView.h来定义attString一个属性：
+```Obj-C
+#import "JY_CTColumnView.h"
+
+@interface JY_CTView : UIView{
+    CGFloat _frameXOffset;
+    CGFloat _frameYOffset;
+}
+
+@property(nonatomic,copy) NSAttributedString* attString;
+```
+在运行之前先删除```JY_CTView.m```的```drawRect:```方法中相关代码
+```Obj-C
+//Parser tag
+JYMarkParser* p = [[JYMarkParser alloc]init];
+NSAttributedString * attString = [p attrStringFromMark: @"Hello <font color=\"red\">core text <font color=\"blue\">world!"];
+```
+
 现在，您可以再次点击运行来查看该文本文件的内容的视图。酷！...
  
 这个文本如何使列？幸运的是核心文本提供了一个方便的功能 -CTFrameGetVisibleStringRange。这个函数告诉你多少文字会放入一个给定的frame。这样的想法是 - 创建列，检查多少文字适合在里面，如果有更多的 - 创建另一列，
