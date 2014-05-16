@@ -496,10 +496,14 @@ Drawing Images in Core Text（CoreText中绘制图像）
 基本上核心文本不具有绘制图像的可能性。然而，因为它是一个布局引擎，可以做的是给要画一幅画留下一个空的空间。而且，由于你的代码已经在`drawRect：`方法里面。你自己绘制一张图片很容易。
 
 让我们来看看如何在文本留下空白用于绘制图像，记住所有的文字块是`CTRun`实例!你只需设置一个委托为给定的`CTRun`并且委托对象负责要让`CoreText`知道`CTRun`的**上升空间**，**下降空间**和**宽度**。像这样：
+
+ ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/img06.jpg "github")
  
-当CoreText“到达”一CTRun其中有一个CTRunDelegate它会询问委托- 多么宽，我应该留给这个块的数据，有多高，应该是什么？这样，你建立在文本中孔 - 然后你画你的图片在那个非常的地方。
-让我们先添加一个“IMG”标签支持在我们的小标记解析器！打开MarkupParser并且找到"} //end of font parsing";在这一行后面，立即添加下面的代码添加为“IMG”标签的支持：
-```Obj-C 
+当`CoreText`到达一`CTRun`其中有一个`CTRunDelegate`它会询问委托- 多么宽，我应该留给这个块的数据，有多高，应该是什么？这样,在你建立的文本空白处 - 然后你画你的图片在那个非常的地方。
+
+让我们先添加一个`IMG`标签支持在我们的小标记解析器！打开`JYMarkupParser`并且找到`} //end of font parsing`;在这一行后面，立即添加下面的代码添加为`IMG`标签的支持：
+
+```
 if ([tag hasPrefix:@"img"]) {
     
     __block NSNumber* width = [NSNumber numberWithInt:0];
@@ -563,28 +567,38 @@ if ([tag hasPrefix:@"img"]) {
     [aString appendAttributedString:[[NSAttributedString alloc] initWithString:@" " attributes:attrDictionaryDelegate]];
 }
 ```
-让我们来看看所有的新代码 - 实际上解析“IMG”标签和解析字体标签确实几乎是一样的，通过使用3个正则表达式你有效地检索img标签的宽度，高度和src属性。当完成 - 你添加一个新的NSDictionary持有你刚刚解析出来的信息，再加上图像在文本的位置，最后添加到self.images中。
-现在看第1 部分- CTRunDelegateCallbacks是一个C结构体，持有引用功能。这个结构体提供了你想传递给CTRunDelegate的信息。正如你已经可以猜到的getWidth被调用来提供对CTRun的宽度，getAscent提供CTRun的高度。在你上面的代码提供该些处理程序的函数名; 稍后我们要添加的函数主体。
-第2节是非常重要的 – imgAtt字典持有的图像的尺寸; 这个对象将被retain一下在非ARC，因为它将要传递给函数处理-所以，当getAscent处理函数触发时它会得到参数imgAttr字典，然后读取图片的高度，并且提供值给CoreText。（就是这个feel倍爽）！
-CTRunDelegateCreate在第3节创建一个委托实例和绑定的回调与数据参数。
-在接下来的步骤中，您需要创建的属性字典（以同样的方式作为上述字体的格式），不能直接使用CTRunDelegateRef。到最后你加一个空格去触发delagate图像将被渲染。
+
+让我们来看看所有的新代码 - 实际上解析`IMG`标签和解析字体标签确实几乎是一样的，通过使用3个正则表达式你有效地检索`img`标签的宽度，高度和`src`属性。当完成 - 你添加一个新的`NSDictionary`持有你刚刚解析出来的信息，再加上图像在文本的位置，最后添加到`self.images`中。
+
+现在看第1 部分- `CTRunDelegateCallbacks`是一个**C**结构体，持有引用功能。这个结构体提供了你想传递给`CTRunDelegate`的信息。正如你已经可以猜到的`getWidth`被调用来提供对`CTRun`的宽度，`getAscent`提供`CTRun`的高度。在你上面的代码提供该些处理程序的函数名; 稍后我们要添加的函数主体。
+
+第2节是非常重要的 – `imgAtt`字典持有的图像的尺寸; 这个对象将被`retain`一下在非_ARC_，因为它将要传递给函数处理-所以，当`getAscent`处理函数触发时它会得到参数`imgAttr`字典，然后读取图片的高度，并且提供值给`CoreText`。（就是这个feel倍爽）！
+
+`CTRunDelegateCreate`在第3节创建一个委托实例和绑定的回调与数据参数。在接下来的步骤中，您需要创建的属性字典（以同样的方式作为上述字体的格式），不能直接使用`CTRunDelegateRef`。到最后你加一个空格去触发delagate图像将被渲染。
+
 下一步，你已经预料，是提供的回调函数给委托：
-```C
+
+```
 /* Callbacks */
 static void deallocCallback( void* ref ){
     ref =nil;
 }
+
 static CGFloat ascentCallback( void *ref ){
     return [(NSString*)[(__bridge NSDictionary*)ref objectForKey:@"height"] floatValue];
 }
+
 static CGFloat descentCallback( void *ref ){
     return [(NSString*)[(__bridge NSDictionary*)ref objectForKey:@"descent"] floatValue];
 }
+
 static CGFloat widthCallback( void* ref ){
     return [(NSString*)[(__bridge NSDictionary*)ref objectForKey:@"width"] floatValue];
 }
 ```
-ascentCallback，descentCallback和widthCallback读各属性从字典中并且提供给CoreText，。deallocCallback做的是什么，它释放的字典保存的图像信息- 这就是所谓的当CTRunDelegate得到释放，让你有机会做你的内存管理。
+
+```ascentCallback```，```descentCallback```和`widthCallback`读各属性从字典中并且提供给`CoreText`，。`deallocCallback`做的是什么？它释放的字典保存的图像信息- 这就是所谓的当`CTRunDelegate`得到释放，让你有机会做你的内存管理。
+
 现在，您的解析器处理“IMG”标签，让我们也调整CTView来呈现它们。我们需要一种方法来将图像数组发送到视图，让我们结合设置属性字符串和图像转声明一个新方法。添加的代码：
 JY_CTView.h
 @property(nonatomic,strong) NSArray* images;
