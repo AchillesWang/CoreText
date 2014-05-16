@@ -397,24 +397,26 @@ NSAttributedString * attString = [p attrStringFromMark: @"Hello <font color=\"re
 
 现在，您可以再次点击运行来查看该文本文件的内容的视图。酷！...
 
- ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/img05.png "github")
+ ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/img05.jpg "github")
  
-这个文本如何使列？幸运的是核心文本提供了一个方便的功能 -CTFrameGetVisibleStringRange。这个函数告诉你多少文字会放入一个给定的frame。这样的想法是 - 创建列，检查多少文字适合在里面，如果有更多的 - 创建另一列，
-首先 - 我们将会有列，那么页面，然后一整本杂志，所以......让我们使我们的CTView子类UIScrollView中得到自由分页和滚动！
-打开CTView.h和更改继承关系
-@interface JY_CTView : UIScrollView<UIScrollViewDelegate>
-OK！我们已经得到了自由滚动和翻页现已推出。我们要启用分页在一分钟内。截至目前，我们正在创建我们的framesetter和frame在drawRect：方法内。当你有列和不同的格式最好是做所有这些计算一次。所以，我们要做的是拥有新的类“CTColumnView” 这只会呈现传递给它的CT内容，而在我们的CTView类我们将只有一次创建CTColumnView的实例，并将其添加为子视图。
-因此，要总结：CTView是要采取搭理滚动，分页和建设列，CTColumnView实际上会呈现在屏幕上的内容。
-这个类确实差不多就是这样- 它只是呈现CTFrame。我们将在该杂志的每个文本列上创建它的一个实例。
-让我们首先添加一个属性来保存我们的CTView的frames并声明buildFrames方法，它会做的列设置：
+这个文本如何分列？幸运的是核心文本提供了一个方便的功能 -`CTFrameGetVisibleStringRange`。这个函数告诉你多少文字会放入一个给定的`frame`。这样的想法是 - 创建列，检查多少文字适合在里面，如果有更多的 - 创建另一列，
 
-```Obj-C 
+首先 - 我们将会有列，那么页面，然后一整本杂志，所以......让我们使我们的`JY_CTView`子类`UIScrollView`中得到自由分页和滚动！
+
+打开CTView.h和更改继承关系`@interface JY_CTView : UIScrollView<UIScrollViewDelegate>`
+OK！我们已经得到了自由滚动和翻页现已推出。我们要启用分页在一分钟内。截至目前，我们正在创建我们的`CTFramesetter`和`CTFrame`在`drawRect：`方法内。当你有列和不同的格式最好是做所有这些计算一次。所以，我们要做的是拥有新的类`JY_CTColumnView`.
+
+因此，要总结：`JY_CTView`是要采取搭理滚动，分页和建设列，`JY_CTColumnView`实际上会呈现在屏幕上的内容。这个类确实差不多就是这样- 它只是呈现CTFrame。我们将在该杂志的每个文本列上创建它的一个实例。
+
+让我们首先添加一个属性来保存我们的`JY_CTView`的`frames`并声明`buildFrames`方法，它会做的列设置：
+
+```
 @property(nonatomic,strong) NSMutableArray* frames;
 -(void)buildFrames;
 ```
-现在buildFrames可以一次创建文本框，并将其存储在“frames”数组。让我们添加这样做的代码。
+现在`buildFrames`可以创建文本框，并将其存储在“frames”数组。让我们添加这样做的代码。
 
-```Obj-C 
+```
 -(void)buildFrames{
     _frameXOffset = 20; //1
     _frameYOffset = 20;
@@ -467,29 +469,33 @@ OK！我们已经得到了自由滚动和翻页现已推出。我们要启用分
     
 }
 ```
-<p>让我们来看看代码。</p>
+让我们来看看代码
 
-1. 这里我们做一些设置 - 定义X和Y偏移，启用分页并创建一个空的frames数组
-2. buildFrames继续通过创建一个路径和视图的边界frame（稍有偏差，所以我们有边距）
-3. 该段说明textPos，这将保持当前位置的文本。这也声明columnIndex，这将计算已经创建多少列。
-4. 这里的while循环运行，直到我们到达了文本的末尾。在循环中，我们创建一个列范围：colRect是的CGRect，要看columnIndex保持当前列的原点和大小。请注意，我们正在不断建立列在右边（不能跨，然后向下）。
-5. 这使得利用CTFrameGetVisibleStringRange功能要弄清楚什么部分的字符串可以容纳在框架（在这种情况下，文本列）。 textPos是这个范围的长度增加，所以下一列的建设可以在下一循环开始（如果有多个文本剩余）。
-6. 而不是像绘画前frame在这里，我们把它传递给新创建的CTColumnView，我们将其存储在self.frames数组为以后的使用，我们把它作为子视图(ScrollView中)。
-7. 最后，totalPages持有所产生的总页数，以及CTView的contentSize属性设置，所以当有内容多于一页，我们得到滚动是自由的。
+1. 这里我们做一些设置 - 定义X和Y偏移，启用分页并创建一个空的`frames`数组
+2. `buildFrames`继续通过创建一个路径和视图的边界`frame`（稍有偏差，所以我们有边距）
+3. 该段说明`textPos`，这将保持当前位置的文本。这也声明`columnIndex`，这将计算已经创建多少列。
+4. 这里的`while`循环运行，直到我们到达了文本的末尾。在循环中，我们创建一个列范围：`colRect`是的`CGRect`，要看`columnIndex`保持当前列的原点和大小。请注意，我们正在不断建立列在右边（不能跨，然后向下）。
+5. 这使得利用`CTFrameGetVisibleStringRange`功能要弄清楚什么部分的字符串可以容纳在`CGRect`（在这种情况下，文本列）。 `textPos`是这个范围的长度增加，所以下一列的建设可以在下一循环开始（如果有多个文本剩余）。
+6. 而不是像绘画前`frame`在这里，我们把它传递给新创建的`JY_CTColumnView`，我们将其存储在`self.frames`数组为以后的使用，我们把它作为子视图(`ScrollView`中)。
+7. 最后，`totalPages`持有所产生的总页数，以及`JY_CTView`的`contentSize`属性设置，所以当有内容多于一页，我们得到滚动是自由的。
 
-现在，让我们也调用buildFrames当所有的CT设置完成了。里面JYViewController.m添加在viewDidLoad中的结尾：
-```Obj-C 
-[(JY_CTView *)[self view] buildFrames]
+现在，让我们也调用`buildFrames`当所有的`CoreText`设置完成了。里面`JYViewController.m`添加在`viewDidLoad`中的结尾：
+``` 
+[_contextView buildFrames]
 ```
 
-还有一件事让新代码尝试前做，在文件CTView.m找到方法的drawRect：将其删除。我们现在做的所有绘制在CTColumnView类中，所以我们不需要drawRect：方法，专注实现ScrollView的功能。
+还有一件事让新代码尝试前做，在文件`JY_CTView.m`找到方法的`drawRect：`将其删除。我们现在做的所有绘制在`JY_CTColumnView`类中，所以我们不需要`drawRect：`方法，专注实现`ScrollView`的功能。
 好吧……点击运行，你会看到成列的文本，还可以进行拖动。
  
 我们有列格式化文本，但我们错过的图片。原来绘制的图像与文字的核心是不那么容易 - 这毕竟是一个文本框架。
+
 但由于这样的事实，我们已经有了一个小标记解析器我们要拿到里面的文字图像！
+
 Drawing Images in Core Text（CoreText中绘制图像）
-基本上核心文本不具有绘制图像的可能性。然而，因为它是一个布局引擎，什么可以做的是要画一幅画留下一个空的空间。什么可以做的是要画一幅画留下一个空的空间。而且，由于你的代码已经在drawRect：方法里面。你自己绘制一张图片很容易。
-让我们来看看如何在文本留下空白用于绘制图像，记住所有的文字块是CTRun实例？您只需设置一个委托为给定的CTRun并且委托对象负责要让CoreText知道CTRun的上升空间，下降空间和宽度。像这样：
+-----------------------------------------------
+基本上核心文本不具有绘制图像的可能性。然而，因为它是一个布局引擎，可以做的是给要画一幅画留下一个空的空间。而且，由于你的代码已经在`drawRect：`方法里面。你自己绘制一张图片很容易。
+
+让我们来看看如何在文本留下空白用于绘制图像，记住所有的文字块是`CTRun`实例!你只需设置一个委托为给定的`CTRun`并且委托对象负责要让`CoreText`知道`CTRun`的**上升空间**，**下降空间**和**宽度**。像这样：
  
 当CoreText“到达”一CTRun其中有一个CTRunDelegate它会询问委托- 多么宽，我应该留给这个块的数据，有多高，应该是什么？这样，你建立在文本中孔 - 然后你画你的图片在那个非常的地方。
 让我们先添加一个“IMG”标签支持在我们的小标记解析器！打开MarkupParser并且找到"} //end of font parsing";在这一行后面，立即添加下面的代码添加为“IMG”标签的支持：
