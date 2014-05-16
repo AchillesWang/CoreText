@@ -396,6 +396,8 @@ NSAttributedString * attString = [p attrStringFromMark: @"Hello <font color=\"re
 ```
 
 现在，您可以再次点击运行来查看该文本文件的内容的视图。酷！...
+
+ ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/img05.png "github")
  
 这个文本如何使列？幸运的是核心文本提供了一个方便的功能 -CTFrameGetVisibleStringRange。这个函数告诉你多少文字会放入一个给定的frame。这样的想法是 - 创建列，检查多少文字适合在里面，如果有更多的 - 创建另一列，
 首先 - 我们将会有列，那么页面，然后一整本杂志，所以......让我们使我们的CTView子类UIScrollView中得到自由分页和滚动！
