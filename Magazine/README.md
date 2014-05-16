@@ -4,12 +4,14 @@ CoreText
 
 Introduction
 -----------------------------------  
-CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本布局和格式。它位于在UIKit中和CoreGraphics/Quartz之间的最佳点。<br/>
-* UIKit中你有的文本空间，你可以通过XIB简单的使用文本控件在屏幕上显示文字，但你不能改变个别字的颜色。
-* CoreGraphics/Quartz你可以做几乎可以胜任所有的工作，但是你需要计算每个字形的在文本中的位置，并绘制在屏幕上。
-* CoreText正好位于两者之间！你可以完全控制位置，布局，属性，如颜色和大小，但CoreText布局需要你自己管理-从自动换行到字体渲染等等。
+CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本布局和格式。它位于在UIKit中和CoreGraphics/Quartz之间的最佳点。
 
-<p>如果你正在创建一个iPad上的杂志或书籍的应用程序，使用CoreText非常方便。这个CoreText教程将带你如何使用CoreText创建一个杂志应用你将学习如何：</p>
+* `UIKit`中你有的文本空间，你可以通过XIB简单的使用文本控件在屏幕上显示文字，但你不能改变个别字的颜色。
+* `CoreGraphics/Quartz`你可以做几乎可以胜任所有的工作，但是你需要计算每个字形的在文本中的位置，并绘制在屏幕上。
+* `CoreText`正好位于两者之间！你可以完全控制位置，布局，属性，如颜色和大小，但`CoreText`布局需要你自己管理-从自动换行到字体渲染等等。
+
+如果你正在创建一个__iPad__上的杂志或书籍的应用程序，使用`CoreText`非常方便。这个`CoreText`教程将带你如何使用CoreText创建一个杂志应用你将学习如何：
+
 * 奠定格式化的上下文本在屏幕上
 * 微调文本的外观
 * 向文本内容中添加图片
@@ -17,19 +19,21 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
 * 最后吃掉你的脑子
 
 ### 建立一个核心文本项目
-<p>为了充分利用这个CoreText教程，您首先要知道iOS开发的基础知识。如果你是iOS开发新手，首先你应该看看的一些基础教程.事不宜迟，让我们通过自己开发一个简单的《杂志》应用程序:</p>
+为了充分利用这个`CoreText`教程，您首先要知道**iOS**开发的基础知识。如果你是**iOS**开发新手，首先你应该看看的一些基础教程.事不宜迟，让我们通过自己开发一个简单的《杂志》应用程序:
+
 * 创建应用的时候选` Single View Application`
 * 添加` CoreText.framework`
 
 ### 添加一个CoreText View
-在UIView的drawRect:方法中使用CoreText。
-* 首先，创建一个JY_CTView继承自UIView。
-* 其次，在Storyboard中添加一个UIView，就像这样:<br/>
+在`UIView`的`drawRect:`方法中使用`CoreText`。
+
+* 首先，创建一个`JY_CTView`继承自`UIView`。
+* 其次，在Storyboard中添加一个`UIView`，就像这样:
 ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/JY_CTView01.png "github")  
 * 最后在 drawRect函数中绘制文本`苍老师`
 
 
-```Obj-C
+```
 -(void)drawRect:(CGRect)rect{
 	// Drawing code
 	CGContextRef ref = UIGraphicsGetCurrentContext();
@@ -53,19 +57,18 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
 好吧让我们来讨论这个，使用上面的注释标记来指定每个部分:</br>
 
 1. 在这里，你需要创建一个边界，在区域的路径中您将绘制文本。（就是说我给你指定一个帐号，你必需给指定帐号汇钱）。在Mac和iOS上CoreText支持不同的形状，如矩形和圆。在这个简单的例子中，您将使用整个视图范围为在那里您将通过创建从self.bounds一个CGPath参考绘制矩形。
-
 2. 在核心文字你不使用的NSString，而是NSAttributedString，如下图所示。 NSAttributedString是一个非常强大的NSString衍生类，它允许你申请的格式属性的文本。就目前而言，我们不会使用格式 - 这里只是创建了一个纯文本字符串。
-
 3. CTFramesetter当采用CoreText绘制文本最重要的一个类，它管理你的字体引用和你的文本绘制框架。就目前而言，你需要知道的是，CTFramesetterCreateWithAttributedString为您创建一个CTFramesetter，保留它，并用附带的属性字符串初始化它。在这部分中，之后使用CTFramesetterCreateFrame 得到frame用framesetter和path，（我们选择整个字符串在这里），并在绘制时，文字会出现在矩形
-
 4. CTFrameDraw在提供的大小在给定上下文后绘制，苍老师
-
 5. 最后，所有使用的对象被释放
 
-<p>请注意，您使用一套像CTFramesetterCreateWithAttributedString和CTFramesetterCreateFrame功能，而不是直接使用Objective-C对象CoreText类时。你可能会认为自己“为什么我会要再次使用C，我认为我应该用Objective-C去完成？”好了，很多iOS上的底层库中都在使用标准C，因为速度和简单。不过别担心，你会发现CoreText函数很容易。只是一个要记住最重要的一点：不要忘记使用CFRelease释放内存。不管你信不信，这就是你使用CoreText绘制一些简单的文本,点击运行:</p>
+请注意，您使用一套像```CTFramesetterCreateWithAttributedString```和`CTFramesetterCreateFrame`功能，而不是直接使用Objective-C对象CoreText类时。你可能会认为自己“为什么我会要再次使用C，我认为我应该用Objective-C去完成？”好了，很多iOS上的底层库中都在使用标准C，因为速度和简单。不过别担心，你会发现CoreText函数很容易。只是一个要记住最重要的一点：不要忘记使用CFRelease释放内存。不管你信不信，这就是你使用CoreText绘制一些简单的文本,点击运行:
+
  ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/can_down.png "github") 
-<p>嗯！这不是我的`苍老师`？因为像许多低级别的API，CoreText采用了Y坐标系翻转。因为这个使事情变得更糟，内容也呈现向下翻转！(CoreText因为是用了`笛卡尔坐标系`)，请记住，如果你混合UIKit的绘画和CoreText绘画，你可能会得到奇怪的结果让我们来解决的内容方向！修改代码</p>
-```Obj-C
+ 
+嗯！这不是我的`苍老师`？因为像许多低级别的API，CoreText采用了Y坐标系翻转。因为这个使事情变得更糟，内容也呈现向下翻转！(CoreText因为是用了`笛卡尔坐标系`)，请记住，如果你混合UIKit的绘画和CoreText绘画，你可能会得到奇怪的结果让我们来解决的内容方向！修改代码
+
+```
 -(void)drawRect:(CGRect)rect{
 	// Drawing code
 	CGContextRef ref = UIGraphicsGetCurrentContext();
@@ -90,31 +93,34 @@ CoreText是的iOS3.2+和OSX10.5+中的文本引擎，让您精细的控制文本
 	CFRelease(frame);
 }
 ```
+这是非常简单的代码，刚刚翻转的内容通过应用转换到视图的上下文。每一次绘制文本的时候只需要复制/粘贴它（就是把这一行代码在绘制文本前，从copy过去就行了）。
+再次运行一下，看`苍老师`是不是又回来了。
 
-<p>这是非常简单的代码，刚刚翻转的内容通过应用转换到视图的上下文。每一次绘制文本的时候只需要复制/粘贴它（就是把这一行代码在绘制文本前，从copy过去就行了）。
-再次运行一下，看`苍老师`是不是又回来了。</p>
  ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/can_up.png "github")
  
 The Core Text Object Model(Core Text对象模型)
 ----------------------------------- 
-如果你是一个有点困惑CTFramesetter和CTFrame 没关系。在这里，我会做一个简短解释CoreText是如何呈现的文字内容。
-下面看起来像是CoreText对象模型：
+如果你是一个有点困惑`CTFramesetter`和`CTFrame`没关系。在这里，我会做一个简短解释`CoreText`是如何呈现的文字内容。
+下面看起来像是`CoreText`对象模型：
 
  ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/img01.png "github")
  
-您可以用NSAttributedString创建一个CTFramesetterRef，同时CTTypesetter的实例将自动为您创建，管理您的字体类。接下来您使用CTFramesetter创建一个或多个frame您在其中会呈现文本。
+您可以用`NSAttributedString`创建一个`CTFramesetterRef`，同时`CTTypesetter`的实例将自动为您创建，管理您的字体类。接下来您使用`CTFramesetter`创建一个或多个`CTFrame`您在其中会呈现文本。
 
-当你创建一个frame您要它文字将其矩形的范围内呈现，然后CoreText自动为文本的每一行文字，创建一个CTLine和（注意）一个CTRun(每个文本块具有相同的格式) 
+当你创建一个`CTFrame`您要它文字将其矩形的范围内呈现，然后`CoreText`自动为文本的每一行文字，创建一个`CTLine`（注意一个`CTRun`,每个`CTRun`块具有相同的格式 )
 
-例子，核心文本将创建一个CTRun如果你有几个单词在一排红色，接着又CTRun以下纯文本，接着又CTRun加粗句子。再等等，非常重要的 - 你没有创建CTRun实例，CoreText创建它根据你提供的NSAttributedString中的属性
-每个CTRun的对象可以采取不同的属性，所以你必须很好地控制字距、连字，宽度，高度等。
+例子，核心文本将创建一个`CTRun`如果你有几个单词在一排红色，接着又`CTRun`加粗句子。再等等，非常重要的 - 你没有创建`CTRun`实例，`CoreText`创建它根据你提供的`NSAttributedString`中的属性
+每个`CTRun`的对象可以采取不同的属性，所以你必须很好地控制字距、连字，宽度，高度等。
 
 Onto the Magazine App!（杂志应用程序）
 -----------------------------------
-要创建这个杂志的应用程序, 我们需要标记一些文本具有不同的属性的能力。我们可以做到这一点通过直接使用在NSAttributedString中的方法如setAttributes:range，但是在实践中这是笨拙的处理方式（除非你喜欢刻意写一吨的代码！）
+要创建这个杂志的应用程序, 我们需要标记一些文本具有不同的属性的能力。我们可以做到这一点通过直接使用在`NSAttributedString`中的方法如`setAttributes:range`，但是在实践中这是笨拙的处理方式（除非你喜欢刻意写一吨的代码！）
+
 所以为了让事情更简单与合作，我们将创建一个简单的文本标记解析器，这将使我们能够使用简单的标签来在杂志内容设置格式。
+
 选择*File*>*New*>*New File*，选择*iOS*>Cocoa Touch*>*Objective-C class*，然后单击下一步。输入NSObject为父类，单击下一步，命名新类MarkupParser，然后单击保存。
-```Obj-C
+
+```
 //MarkupParser.h
 #import <Foundation/Foundation.h>
 #import <CoreText/CoreText.h>
@@ -130,7 +136,7 @@ Onto the Magazine App!（杂志应用程序）
 -(NSAttributedString*)attrStringFromMark:(NSString*)html;
 @end
 ```
-```Obj-C
+```
 //MarkupParser.m
 #import "JYMarkParser.h"
 
@@ -174,8 +180,10 @@ Onto the Magazine App!（杂志应用程序）
 ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/img02.png "github")
 
 对于本教程的目的，这样的标记将是相当足够了。为你的项目可以进一步开发它，如果你想更牛B的功能的话。
+
 Let’s go在```attrStringFromMark：```方法中添加以下内容：
-```Obj-C
+
+```
 -(NSAttributedString*)attrStringFromMark:(NSString*)markup
 {
     NSMutableAttributedString* aString = [[NSMutableAttributedString alloc] initWithString:@""];//1
@@ -197,14 +205,14 @@ Let’s go在```attrStringFromMark：```方法中添加以下内容：
 ```
 有两个章节，这里包括：
 
-1. 首先，初始化一个空的NSMutableAttributedString
-2. 接下来，你需要创建一个正则表达式来匹配文本和标签快。这个正则表达式将匹配基本文本字符串和下列标记，正则表达式选找匹配的字符串，直到你遇到**<**然后匹配任何数量的字符，直到你遇到**>**或者**\n**。
+1. 首先，初始化一个空的`NSMutableAttributedString`
+2. 接下来，你需要创建一个正则表达式来匹配文本和标签快。这个正则表达式将匹配基本文本字符串和下列标记，正则表达式选找匹配的字符串，直到你遇到`<`然后匹配任何数量的字符，直到你遇到`>`或者`\n`。
 
 为什么要创建这个正则表达式？我们将用它来搜索字符串的每个匹配的地方，然后1）找到要修改样式的字符串，然后2)根据解析出来的样式，改变字符串的颜色，字体等。重复1、2的步骤改变每一处样式。很简单的解析器，不是吗？
 
 现在数组```chunks```中你拥有了所有的标记和需要修改的文本，你需要循chunks从其中取得要字符串和样式
 
-```Obj-C
+```
 -(NSAttributedString*)attrStringFromMark:(NSString*)mark
 {
     NSMutableAttributedString* aString = [[NSMutableAttributedString alloc] initWithString:@""];
@@ -282,18 +290,20 @@ options:NSRegularExpressionCaseInsensitive|NSRegularExpressionDotMatchesLineSepa
 
 尼玛，这是一个很大的代码！但不用担心，我们在这里逐节介绍：
 
-1. 快速枚举```Obj-C chunks```数组中我们用正则找到的```Obj-C NSTextCheckingResult```对象，对“chunks”数组中的元素用“<”字符分割（“<”是标签的起始）。其结果，在parts [0]中的内容添加到aString中(aString是一个NSAttributedString)，接下来在parts[1]中你有标记的内容为后面的文本改变格式。
-2. 其次,你创建一个字典保持一系列的格式化选项- 这是你可以通过格式属性的NSAttributedString的方式。看看这些Key的名称- 他们是苹果定义的常量(详情请围观参考)。通过调用appendAttributedString: 新的文本块与应用格式被添加到结果字符串。
-3. 最后，你检查如果有文字后发现了一个标记；如果以“font”开头的正则表达式每一种可能的标记属性。对于“face”属性的字体的名称保存在self.font，为“color”我和你做了一点改变：对<font color="red">文本值“red”采取的是colorRegex，然后选择器“redColor”被创建和执行在UIColor。
+1. 快速枚举```chunks```数组中我们用正则找到的```NSTextCheckingResult```对象，对“chunks”数组中的元素用`<`字符分割（`<`是标签的起始）。其结果，在`parts [0]`中的内容添加到`aString`中(`aString`是一个`NSAttributedString`)，接下来在`parts[1]`中你有标记的内容为后面的文本改变格式。
+2. 其次,你创建一个字典保持一系列的格式化选项- 这是你可以通过格式属性的`NSAttributedString`的方式。看看这些**Key**的名称- 他们是苹果定义的常量(详情请围观参考)。通过调用`appendAttributedString:` 新的文本块与应用格式被添加到结果字符串。
+3. 最后，你检查如果有文字后发现了一个标记；如果以`font`开头的正则表达式每一种可能的标记属性。对于`face`属性的字体的名称保存在`self.font`，为`color`我和你做了一点改变：对`<font color="red">`文本值`red`采取的是colorRegex，然后选择器`redColor`被创建和执行在UIColor。
 
-类 - 这（嘿嘿）返回一个红色的的UIColor实例（在实际中可以使用#FFFFFFFF这种方式装换成颜色，网上有自己找找），请注意这个技巧只适用于的UIColor的预定义的颜色（如果你调用了一个UIColor中不存在的方法，你的代码会奔溃！）但是这足以满足本教程。stroke color属性的工作原理很像颜色属性，但如果则strokeColor的值为“none”刚刚设置笔触widht到0.0，所以stroke没有将被应用到的文本。
-Note:如果你好奇在本节中正则表达式是如何工作，请阅读[NSRegularExpression class reference](https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSRegularExpression_Class/Reference/Reference.html#//apple_ref/doc/uid/TP40009708-CH1-SW48)。
+类 - 这（嘿嘿）返回一个红色的的`UIColor`实例（在实际中可以使用#FFFFFFFF这种方式装换成颜色，网上有自己找找），请注意这个技巧只适用于的`UIColor`的预定义的颜色（如果你调用了一个`UIColor`中不存在的方法，你的代码会奔溃！）但是这足以满足本教程。`stroke color`属性的工作原理很像颜色属性，但如果则`strokeColor`的值为`none`刚刚设置笔触`widht`到`0.0`，所以`stroke`没有将被应用到的文本。
 
-没错！绘制格式化文本的一半工作完成- 现在用attrStringFromMark：可以得到一个有标记的NSAttributedString输出到CoreText。
+**Note:**如果你好奇在本节中正则表达式是如何工作，请阅读[NSRegularExpression class reference](https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSRegularExpression_Class/Reference/Reference.html#//apple_ref/doc/uid/TP40009708-CH1-SW48)。
+
+没错！绘制格式化文本的一半工作完成- 现在用`attrStringFromMark：`可以得到一个有标记的`NSAttributedString`输出到`CoreText`。
 因此，让我们传递一个字符串来呈现，并尝试一下！
 
-打开CTView.m,修改```drawRect:```：
-```Obj-C
+打开`JY_CTView.m`,修改```drawRect:```：
+
+```
 -(void)drawRect:(CGRect)rect
 {
     // Drawing code
@@ -327,16 +337,17 @@ Note:如果你好奇在本节中正则表达式是如何工作，请阅读[NSReg
 
  ![github](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/image/img04.png "github")
  
-是不是只是真棒？由于50行的解析，我们不必处理文本范围和代码重文本格式，我们现在可以只使用一个简单的文本在**Magazine app**中。此外刚刚编写的简单的解析器，可以无限扩展，支持一切你需要在你的应用程序的杂志。
+是不是真棒？由于50行的解析，我们不必处理文本范围和代码重文本格式，我们现在可以只使用一个简单的文本在**Magazine app**中。此外刚刚编写的简单的解析器，可以无限扩展，支持一切你需要的功能。
 
 A Basic Magazine Layout（一个基础的杂志布局）
 ----------------------------------------------
-到目前为止，我们的文字显示出来，它是一个很好的第一步。但对于一本杂志，我们希望有列 - 而这正是CoreText变得特别方便。
+到目前为止，我们的文字显示出来，它是一个很好的第一步。但对于一本杂志，我们希望有列 - 而这正是`CoreText`变得特别方便。
+
 在继续进行布局代码，让我们先加载一个更长的字符串到应用程序，所以我们有一些足够长的多行换行。把这个[点击下载test.txt](https://raw.githubusercontent.com/AchillesWang/CoreText/master/Magazine/test.txt)拷贝到项目中。
 
-然后在Controller中添加一下代码
+然后在`JYController`中添加一下代码
 
-```Obj-C 
+```
 #import "JYViewController.h"
 #import "JY_CTView.h"
 #import "JYMarkParser.h"
@@ -362,10 +373,11 @@ A Basic Magazine Layout（一个基础的杂志布局）
 @end
 ```
 
-当应用程序的视图被加载，应用程序从test.txt的读取文本，将其转换为一个属性字符串，然后设置在窗口的视图attString属性。我们还没有添加该属性到CTView，所以让我们添加了下！
+当应用程序的视图被加载，应用程序从`test.txt`的读取文本，将其转换为一个属性字符串，然后设置在窗口的视图`attString`属性。我们还没有添加该属性到`JY_CTView`，所以让我们添加了下！
 
-在JY_CTView.h定义这3个实例变量：```float frameXOffset```、```float frameYOffset; ```、```NSAttributedString* attString;```然后加入相应的代码JY_CTView.h来定义attString一个属性：
-```Obj-C
+在`JY_CTView.h`定义这3个实例变量：```float frameXOffset```、```float frameYOffset; ```、```NSAttributedString* attString;```然后加入相应的代码`JY_CTView.h`来定义`attString`一个属性：
+
+```
 #import "JY_CTColumnView.h"
 
 @interface JY_CTView : UIView{
@@ -376,7 +388,8 @@ A Basic Magazine Layout（一个基础的杂志布局）
 @property(nonatomic,copy) NSAttributedString* attString;
 ```
 在运行之前先删除```JY_CTView.m```的```drawRect:```方法中相关代码
-```Obj-C
+
+```
 //Parser tag
 JYMarkParser* p = [[JYMarkParser alloc]init];
 NSAttributedString * attString = [p attrStringFromMark: @"Hello <font color=\"red\">core text <font color=\"blue\">world!"];
