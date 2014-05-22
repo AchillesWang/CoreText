@@ -1,1 +1,1 @@
--[x]Magazine 里面有CoreText基本代码和解释
+- [x] Magazine 里面有CoreText基本代码和解释
